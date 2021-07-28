@@ -4,6 +4,8 @@
 ./emails_exececoes.txt
 ./colaboradores_ativos.txt
 
+./misc
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
