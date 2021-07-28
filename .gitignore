@@ -1,3 +1,9 @@
+./output.txt
+./emails_ativos.txt
+./backup_realizado.txt
+./emails_exececoes.txt
+./colaboradores_ativos.txt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
