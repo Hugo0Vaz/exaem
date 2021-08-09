@@ -1,54 +1,69 @@
 #==============================================================================#
 #   _____  ____ _  ___ _ __ ___
-# _/ _ \ \/ / _` |/ _ \ '_ ` _ \     seleciona quais coloboradores podem ter
-# |  __/>  < (_| |  __/ | | | | |    os email removidos e feito backup.
+# _/ _ \ \/ / _` |/ _ \ '_ ` _ \     seleciona emails que estão disponíveis
+# |  __/>  < (_| |  __/ | | | | |    para backup e exclusão.
 #  \___/_/\_\__,_|\___|_| |_| |_|
+#     EXclude Available EMails
 #
 # Autor: Hugo Vaz - hugo.martins@kot.com.br
 #==============================================================================#
 
 import re
+import pandas as pd
 
-# arquivos de entrada dos emails
-ea_file = './emails_ativos.txt'
-a_file = './colaboradores_ativos.txt'
-ex_file = './emails_exececoes.txt'
-b_file = './backup_realizado.txt'
-o_file = './output.txt'
+def rm_nan(input_list):
+    a = []
+    for i in input_list:
+        if type(i) != float:
+            a.append(i)
+    return a
 
+def rm_space(input_list):
+    a = []
+    for i in input_list:
+        a.append(re.sub(' +', '', i))
 
-def load_list(input_file):
+    return a
 
-    input_set = set()
+def get_data(input_file):
+    
+    data = pd.read_csv(input_file)
+    
+    colab_ativos = data['Colaboradores Ativos'].tolist()
+    colab_desl = data['Colaboradores Desligados'].tolist()
+    email_ativos = data['Emails Ativos Task'].tolist()
+    emails_exc = data['Emails Exceções'].tolist()
+    backup = data['Backup Realizados'].tolist()
 
-    with open(input_file, 'r') as file:
-        for line in file:
-            line = re.sub(' +', '', line)
-            input_set.add(line)
+    colab_ativos = rm_nan(colab_ativos)
+    colab_desl = rm_nan(colab_desl)
+    email_ativos = rm_nan(email_ativos)
+    emails_exc = rm_nan(emails_exc)
+    backup = rm_nan(backup)
+   
+    colab_ativos = rm_space(colab_ativos)
+    colab_desl = rm_space(colab_desl)
+    email_ativos = rm_space(email_ativos)
+    emails_exc = rm_space(emails_exc)
+    backup = rm_space(backup)
 
-    return input_set
+    return colab_ativos, colab_desl, email_ativos, emails_exc, backup
+   
+def dump_list(output_list, output_file):
+    with open(output_file, 'w') as file:
 
-
-def dump_list(output_set):
-
-    with open(o_file, 'w') as file:
-
-        for item in output_set:
-            print(item)
-            file.write(item)
+        for item in output_list:
+            file.write(item+'\n')
 
 
 if __name__ == '__main__':
 
-    ea_set = load_list(ea_file)
-    a_set = load_list(a_file)
-    ex_set = load_list(ex_file)
-    b_set = load_list(b_file)
-
+    a_set, d_set, ea_set, ex_set, b_set = get_data('./Controle Backup Emails.csv')
+    
     o_set = set()
 
     for i in ea_set:
         if i not in a_set and i not in ex_set and i not in b_set:
             o_set.add(i)
 
-    dump_list(o_set)
+    dump_list(o_set, 'backupTODO.txt')

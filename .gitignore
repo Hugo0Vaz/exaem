@@ -1,9 +1,3 @@
-./output.txt
-./emails_ativos.txt
-./backup_realizado.txt
-./emails_exececoes.txt
-./colaboradores_ativos.txt
-
 ./misc
 
 # Byte-compiled / optimized / DLL files
